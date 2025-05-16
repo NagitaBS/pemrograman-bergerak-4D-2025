@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "466403269362",
+    "project_id": "api-afra-ccc99",
+    "storage_bucket": "api-afra-ccc99.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466403269362:android:35752d91841c71ca510e6b",
+        "android_client_info": {
+          "package_name": "com.example.fluttercreateapp_firebasecli"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKcXDVgyntJjUAT3hUrQrhqym1u-oULeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

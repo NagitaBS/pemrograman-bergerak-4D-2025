@@ -1,0 +1,88 @@
+<?php
+header('Content-Type: application/json');
+
+
+$koneksi = new mysqli("localhost", "root", "", "db_bukufavorit");
+if ($koneksi->connect_error) {
+    die(json_encode([
+        "status" => "error", 
+        "message" => "Koneksi database gagal: " . $koneksi->connect_error
+    ]));
+}
+
+
+$input = file_get_contents('php:
+file_put_contents('input_log.txt', $input . "\n", FILE_APPEND);
+$data = json_decode($input, true);
+
+
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Format JSON tidak valid: " . json_last_error_msg()
+    ]);
+    exit;
+}
+
+
+$required_fields = [
+    'judul' => 'string',
+    'pengarang' => 'string',
+    'genre' => 'string',
+    'tahun_terbit' => 'integer',
+    'deskripsi' => 'string'
+];
+
+
+$errors = [];
+foreach ($required_fields as $field => $type) {
+    if (!isset($data[$field]) {
+        $errors[] = "Field $field harus ada";
+    } elseif (empty($data[$field]) {
+        $errors[] = "Field $field tidak boleh kosong";
+    } elseif ($type === 'integer' && !is_numeric($data[$field])) {
+        $errors[] = "Field $field harus berupa angka";
+    }
+    )
+    )
+}
+
+
+if (!empty($errors)) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Validasi gagal",
+        "errors" => $errors
+    ]);
+    exit;
+}
+
+
+$judul = $koneksi->real_escape_string($data['judul']);
+$pengarang = $koneksi->real_escape_string($data['pengarang']);
+$genre = $koneksi->real_escape_string($data['genre']);
+$tahun_terbit = (int)$data['tahun_terbit'];
+$deskripsi = $koneksi->real_escape_string($data['deskripsi']);
+
+
+$stmt = $koneksi->prepare("INSERT INTO buku (judul, pengarang, genre, tahun_terbit, deskripsi) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("sssis", $judul, $pengarang, $genre, $tahun_terbit, $deskripsi);
+
+if ($stmt->execute()) {
+    $response = [
+        "status" => "success",
+        "message" => "Data buku berhasil ditambahkan",
+        "book_id" => $stmt->insert_id
+    ];
+} else {
+    $response = [
+        "status" => "error",
+        "message" => "Gagal menambahkan data: " . $stmt->error
+    ];
+}
+
+$stmt->close();
+$koneksi->close();
+
+echo json_encode($response);
+?>
